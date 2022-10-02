@@ -9,7 +9,7 @@ env_path = Path('.') / '.env'
 load_dotenv(dotenv_path = env_path)
 
 class Settings:
-    PROJECT_NAME:str = "PlayList Server"
+    PROJECT_NAME:str = "PlayList API"
     PROJECT_VERSION:str = "0.0.0.1"
 
     POSTGRES_USER:str = os.getenv("POSTGRES_USER")

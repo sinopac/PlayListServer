@@ -5,10 +5,9 @@ from config import settings
 
 CONNECTION_STRING = settings.DATABASE_URL
 _engine = create_engine("postgresql://postgres:password1!@localhost/playlist_db")
-_Sessionmaker= sessionmaker(bind=_engine, autocommit=False, autoflush=False)
+_Sessionmaker = sessionmaker(bind=_engine, autocommit=False, autoflush=False)
 
 
-def get_session() -> Generator:
+def get_session() -> sessionmaker:
     session = _Sessionmaker()
     return session
-    
