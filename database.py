@@ -1,12 +1,14 @@
+from email.generator import Generator
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from config import settings
 
 CONNECTION_STRING = settings.DATABASE_URL
-engine = create_engine(CONNECTION_STRING)
+_engine = create_engine("postgresql://postgres:password1!@localhost/playlist_db")
+_Sessionmaker= sessionmaker(bind=_engine, autocommit=False, autoflush=False)
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-Base = declarative_base()
-
+def get_session() -> Generator:
+    session = _Sessionmaker()
+    return session
+    
