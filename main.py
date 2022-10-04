@@ -15,7 +15,7 @@ app.include_router(playlists_route, prefix="/playlists", tags=["playlists"])
 @app.get("/users/{user_id}")
 async def get_user(user_id=None) -> User:
     with get_session() as session:
-        q = session.query(User).filter(User.id == user_id).one()
+        q = session.query(User).filter(User.id == user_id).first()
         if q is not None:
             return q
     return User()
@@ -30,10 +30,16 @@ async def create_user(user: UserCreate):
         password=user.password,
     )
     with get_session() as session:
-        session.add(user)
-        session.commit()
-        session.refresh(user)
-        return user
+        session.begin()
+        try:
+            session.add(user)
+        except:
+            session.rollback()    
+            raise
+        else:
+            session.commit()
+            session.refresh(user)
+            return user
 
 
 if __name__ == "__main__":

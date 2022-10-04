@@ -18,7 +18,7 @@ async def get_playlists() -> List[Playlist]:
 @playlists_route.get("/playlists/{playlist_id}")
 async def get_playlist(playlist_id=None) -> Playlist:
     with get_session() as session:
-        q = session.query(Playlist).filter(Playlist.id == playlist_id).one()
+        q = session.query(Playlist).filter(Playlist.id == playlist_id).first()
         if q is not None:
             return q
     return Playlist()
