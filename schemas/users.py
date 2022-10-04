@@ -1,7 +1,7 @@
 from typing import Optional
 from pydantic import BaseModel, EmailStr, validator
 
-class UserCreate(BaseModel):
+class UserSchema(BaseModel):
     last_name: str
     middle_name: Optional[str]
     first_name: str

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from api.playlists import playlists_route
 from models.users import User
-from schemas.users import UserCreate
+from schemas.users import UserSchema
 from utils.hashing import Hasher
 from database import get_session
 from config import settings
@@ -23,7 +23,7 @@ async def get_user(user_id=None) -> User:
 
 
 @app.post("/users")
-async def create_user(user: UserCreate):
+async def create_user(user: UserSchema):
     user = User(
         last_name=user.last_name,
         first_name=user.first_name,
