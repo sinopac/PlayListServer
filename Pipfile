@@ -10,6 +10,7 @@ sqlalchemy = "*"
 alembic = "*"
 uvicorn = "*"
 pydantic = {extras = ["email"], version = "*"}
+passlib = "*"
 
 [dev-packages]
 black = "*"

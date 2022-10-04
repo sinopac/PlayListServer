@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from api.playlists import playlists_route
 from models.users import User
 from schemas.users import UserCreate
+from utils.hashing import Hasher
 from database import get_session
 from config import settings
 
@@ -27,7 +28,7 @@ async def create_user(user: UserCreate):
         last_name=user.last_name,
         first_name=user.first_name,
         email=user.email,
-        password=user.password,
+        password=Hasher.get_password_hash(user.password)
     )
     with get_session() as session:
         session.begin()
