@@ -5,12 +5,14 @@ name = "pypi"
 
 [packages]
 fastapi = "*"
+uvicorn = "*"
 psycopg2-binary = "*"
 sqlalchemy = "*"
 alembic = "*"
-uvicorn = "*"
 pydantic = {extras = ["email"], version = "*"}
 passlib = "*"
+python-jose = {extras = ["cryptography"], version = "*"}
+bcrypt = "*"
 
 [dev-packages]
 black = "*"

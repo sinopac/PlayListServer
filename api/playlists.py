@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import APIRouter
-from database import get_session
 from models import Playlist
+from database import get_session
 
 playlists_route = APIRouter()
 
@@ -25,5 +25,5 @@ async def get_playlist(playlist_id=None) -> Playlist:
 
 
 @playlists_route.post("/playlists")
-async def create_playlist():
+async def create_playlist() -> Playlist:
     return Playlist()
