@@ -7,6 +7,7 @@ from database import get_session
 
 users_route = APIRouter()
 
+
 @users_route.get("")
 async def get_users() -> List[User]:
     with get_session() as session:
@@ -24,12 +25,14 @@ async def get_user(user_id=None) -> User:
             return q
     return None
 
+
 def get_user_by_email(email: str) -> User:
     with get_session() as session:
         q = session.query(User).filter(User.email == email).first()
         if q is not None:
             return q
-    return None        
+    return None
+
 
 @users_route.post("")
 async def create_user(user: UserSchema) -> User:
@@ -37,14 +40,14 @@ async def create_user(user: UserSchema) -> User:
         last_name=user.last_name,
         first_name=user.first_name,
         email=user.email,
-        password=Hasher.get_password_hash(user.password)
+        password=Hasher.get_password_hash(user.password),
     )
     with get_session() as session:
         session.begin()
         try:
             session.add(user)
         except:
-            session.rollback()    
+            session.rollback()
             raise
         else:
             session.commit()
