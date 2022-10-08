@@ -1,9 +1,7 @@
-from http.client import HTTPException
-from jose import jwt
 from datetime import datetime, timedelta
+from jose import jwt
+from fastapi import APIRouter, Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
-from fastapi import APIRouter, Depends
-from fastapi import status, HTTPException
 
 from models import User
 from api import get_user_by_email
@@ -11,26 +9,25 @@ from utils import Hasher
 
 auth_router = APIRouter()
 
-
-def authenticate(username: str, password: str) -> User:
-    user = get_user_by_email(email=username)
-    if user is None:
+async def authenticate(username: str, password: str) -> User:
+    user = await get_user_by_email(email=username)
+    if not user:
         return None
     if not Hasher.verify_password(password, user.password):
         return None
     return user
 
 
-@auth_router.post("")
+@auth_router.post("/auth")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = authenticate(form_data.username, form_data.password)
-    if user is None:
+    user = await authenticate(form_data.username, form_data.password)
+    if not user:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="username and password not match",
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Incorrect username or password",
         )
     access_token = jwt.encode(
-        {"sub": "user.email", "exp": datetime.utcnow() + timedelta(minutes=30)},
+        {"sub": user.id, "exp": datetime.utcnow() + timedelta(minutes=30)},
         "HereIsSuperSecretkey",
         algorithm="HS256",
     )

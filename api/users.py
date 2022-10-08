@@ -1,32 +1,16 @@
-from typing import List
-from fastapi import APIRouter
+
+from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi.security import OAuth2PasswordBearer
+from jose import jwt
 from models import User
 from schemas import UserSchema
 from utils import Hasher
 from database import get_session
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth")
 users_route = APIRouter()
 
-
-@users_route.get("")
-async def get_users() -> List[User]:
-    with get_session() as session:
-        q = session.query(User).all()
-        if q is not None:
-            return q
-    return []
-
-
-@users_route.get("/{user_id}")
-async def get_user(user_id=None) -> User:
-    with get_session() as session:
-        q = session.query(User).filter(User.id == user_id).first()
-        if q is not None:
-            return q
-    return None
-
-
-def get_user_by_email(email: str) -> User:
+async def get_user_by_email(email: str) -> User:
     with get_session() as session:
         q = session.query(User).filter(User.email == email).first()
         if q is not None:
@@ -34,8 +18,32 @@ def get_user_by_email(email: str) -> User:
     return None
 
 
-@users_route.post("")
+async def get_user_by_id(user_id: str) -> User:
+    with get_session() as session:
+        q = session.query(User).filter(User.id == user_id).first()
+        if q is not None:
+            return q
+    return None
+
+
+@users_route.get("/users")
+async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
+    my_token = jwt.decode(token=token, key="HereIsSuperSecretkey")
+    crurrent_user = await get_user_by_id(my_token['sub'])
+    if not crurrent_user:
+        return None
+    return crurrent_user    
+
+
+@users_route.post("/users")
 async def create_user(user: UserSchema) -> User:
+    exist_user = await get_user_by_email(user.email)
+    if exist_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email address already registered",
+        )
+
     user = User(
         last_name=user.last_name,
         first_name=user.first_name,
@@ -53,3 +61,12 @@ async def create_user(user: UserSchema) -> User:
             session.commit()
             session.refresh(user)
             return user
+
+
+@users_route.put("/users")
+async def update_user(user: UserSchema, token: str = Depends(oauth2_scheme)) -> User:
+    my_token = jwt.decode(token=token, key="HereIsSuperSecretkey")
+    crurrent_user = await get_user_by_email(my_token['sub'])
+    if not crurrent_user:
+        return None
+    return crurrent_user   

@@ -5,11 +5,10 @@ from config import settings
 
 import uvicorn
 
-
 app = FastAPI(title=settings.PROJECT_NAME, version=settings.PROJECT_VERSION)
-app.include_router(auth_router, prefix="/auth", tags=["auth"])
-app.include_router(playlists_route, prefix="/playlists", tags=["playlists"])
-app.include_router(users_route, prefix="/users", tags=["users"])
+app.include_router(auth_router, prefix="/api", tags=["auth"])
+app.include_router(playlists_route, prefix="/api", tags=["playlists"])
+app.include_router(users_route, prefix="/api", tags=["users"])
 
 
 if __name__ == "__main__":

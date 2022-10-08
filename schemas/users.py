@@ -9,6 +9,7 @@ class UserSchema(BaseModel):
     email: EmailStr
     password: str
     password1: str
+    disabled: bool | None = None
 
     @validator("password1")
     def passwords_match(cls, v, values, **kwargs):
