@@ -27,7 +27,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
             detail="Incorrect username or password",
         )
     access_token = jwt.encode(
-        {"sub": user.id, "exp": datetime.utcnow() + timedelta(minutes=30)},
+        {"sub": str(user.id), "exp": datetime.utcnow() + timedelta(minutes=30)},
         "HereIsSuperSecretkey",
         algorithm="HS256",
     )

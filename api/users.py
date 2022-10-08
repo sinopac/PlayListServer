@@ -2,12 +2,14 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
+from sqlalchemy import update
 from models import User
 from schemas import UserSchema
 from utils import Hasher
 from database import get_session
+import uuid
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth")
 users_route = APIRouter()
 
 async def get_user_by_email(email: str) -> User:
@@ -29,7 +31,7 @@ async def get_user_by_id(user_id: str) -> User:
 @users_route.get("/users")
 async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
     my_token = jwt.decode(token=token, key="HereIsSuperSecretkey")
-    crurrent_user = await get_user_by_id(my_token['sub'])
+    crurrent_user = await get_user_by_id(uuid.UUID(my_token['sub']).hex)
     if not crurrent_user:
         return None
     return crurrent_user    
@@ -66,7 +68,18 @@ async def create_user(user: UserSchema) -> User:
 @users_route.put("/users")
 async def update_user(user: UserSchema, token: str = Depends(oauth2_scheme)) -> User:
     my_token = jwt.decode(token=token, key="HereIsSuperSecretkey")
-    crurrent_user = await get_user_by_email(my_token['sub'])
-    if not crurrent_user:
+    current_user = await get_user_by_id(my_token['sub'])
+    if not current_user:
         return None
-    return crurrent_user   
+
+    with get_session() as session:
+        stmt = (
+        update(User)
+        .where(User.id == current_user.id)
+        .values(middle_name=user.middle_name)
+        .execution_options(synchronize_session="fetch"))
+
+        result = session.execute(stmt)
+        print(result.rowcount)
+        
+    return current_user   

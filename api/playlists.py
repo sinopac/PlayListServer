@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordBearer
 from models import Playlist
 from database import get_session
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth")
 playlists_route = APIRouter()
 
 
