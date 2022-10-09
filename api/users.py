@@ -1,4 +1,5 @@
 
+import uuid
 from sqlalchemy.dialects.postgresql import UUID
 from fastapi import APIRouter, Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
@@ -8,7 +9,7 @@ from models import User
 from schemas import UserSchema
 from utils import Hasher
 from database import get_session
-import uuid
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth")
 users_route = APIRouter()

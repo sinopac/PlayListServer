@@ -12,4 +12,6 @@ class Settings:
     POSTGRES_DB:str = os.getenv("POSTGRES_DB", "playlist_db")
     DATABASE_URL:str = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}:{POSTGRES_PORT}/{POSTGRES_DB}" 
 
+    JWT_SECRET_KEY:str = os.getenv("JWT_SECRET_KEY")
+
 settings = Settings

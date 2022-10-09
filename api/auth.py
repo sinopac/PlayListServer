@@ -6,6 +6,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from models import User
 from api import get_user_by_email
 from utils import Hasher
+from config import settings
+
 
 auth_router = APIRouter()
 
@@ -28,7 +30,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         )
     access_token = jwt.encode(
         {"sub": str(user.id), "exp": datetime.utcnow() + timedelta(minutes=30)},
-        "HereIsSuperSecretkey",
+        settings.JWT_SECRET_KEY,
         algorithm="HS256",
     )
 
