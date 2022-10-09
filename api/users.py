@@ -9,6 +9,7 @@ from models import User
 from schemas import UserSchema
 from utils import Hasher
 from database import get_session
+from config import settings
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth")
@@ -32,7 +33,7 @@ async def get_user_by_id(user_id: UUID) -> User:
 
 @users_route.get("/users")
 async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
-    my_token = jwt.decode(token=token, key="HereIsSuperSecretkey")
+    my_token = jwt.decode(token=token, key=settings.JWT_SECRET_KEY)
     crurrent_user = await get_user_by_id(uuid.UUID(my_token['sub']).hex)
     if not crurrent_user:
         return None

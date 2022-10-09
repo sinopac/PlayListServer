@@ -1,3 +1,4 @@
+from enum import unique
 import uuid
 
 from sqlalchemy import Table, Column, DateTime, ForeignKey, String, func
