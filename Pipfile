@@ -13,6 +13,7 @@ pydantic = {extras = ["email"], version = "*"}
 passlib = "*"
 python-jose = {extras = ["cryptography"], version = "*"}
 bcrypt = "*"
+python-multipart = "*"
 
 [dev-packages]
 black = "*"

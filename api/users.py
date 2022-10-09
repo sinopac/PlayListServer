@@ -1,4 +1,5 @@
 
+from sqlalchemy.dialects.postgresql import UUID
 from fastapi import APIRouter, Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
@@ -20,7 +21,7 @@ async def get_user_by_email(email: str) -> User:
     return None
 
 
-async def get_user_by_id(user_id: str) -> User:
+async def get_user_by_id(user_id: UUID) -> User:
     with get_session() as session:
         q = session.query(User).filter(User.id == user_id).first()
         if q is not None:
