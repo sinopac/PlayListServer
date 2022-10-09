@@ -10,7 +10,7 @@ association_table = Table(
     "track_associations",
     Base.metadata,
     Column("playlist_id", UUID, ForeignKey("playlists.id"), primary_key=True),
-    Column("track_id", UUID, ForeignKey("tracks.id"), primary_key=True)
+    Column("track_id", UUID, ForeignKey("tracks.id"), primary_key=True),
 )
 
 
@@ -21,7 +21,7 @@ class Playlist(Base):
     decription = Column(String, index=True)
     owner_id = Column(UUID, ForeignKey("users.id"))
     created_data = Column(DateTime(timezone=True), server_default=func.now())
-    
+
     owner = relationship("User", back_populates="playlists")
     tracks = relationship("Track", secondary=association_table)
 
@@ -38,4 +38,4 @@ class Track(Base):
     audio_metadata = Column(JSONB())
     url = Column(String(30))
     cover_url = Column(String(30))
-    created_data = Column(DateTime(timezone=True), server_default=func.now())    
+    created_data = Column(DateTime(timezone=True), server_default=func.now())
