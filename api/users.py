@@ -36,7 +36,10 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
     my_token = jwt.decode(token=token, key=settings.JWT_SECRET_KEY)
     crurrent_user = await get_user_by_id(uuid.UUID(my_token['sub']).hex)
     if not crurrent_user:
-        return None
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="",
+        )
     return crurrent_user    
 
 
@@ -70,7 +73,7 @@ async def create_user(user: UserSchema) -> User:
 
 @users_route.put("/users")
 async def update_user(user: UserSchema, token: str = Depends(oauth2_scheme)) -> User:
-    my_token = jwt.decode(token=token, key="HereIsSuperSecretkey")
+    my_token = jwt.decode(token=token, key=settings.JWT_SECRET_KEY)
     current_user = await get_user_by_id(my_token['sub'])
     if not current_user:
         return None
@@ -81,8 +84,7 @@ async def update_user(user: UserSchema, token: str = Depends(oauth2_scheme)) -> 
         .where(User.id == current_user.id)
         .values(middle_name=user.middle_name)
         .execution_options(synchronize_session="fetch"))
-
-        result = session.execute(stmt)
-        print(result.rowcount)
+        session.execute(stmt)
+        session.commit()
         
-    return current_user   
+    return current_user
